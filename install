@@ -1,0 +1,37 @@
+#!/bin/sh
+echo "* Check ~/.profile ..."
+if [ -f ~/.profile ]; then
+  echo "Found ~/.profile with the following contents:"
+  cat ~/.profile
+  if grep -q "bashrc" ~/.profile; then
+    echo "It looks like ~/.bashrc is already sourced in it. Quit."
+  else
+    echo 'Append ". ~/.bashrc" to ~/.profile'
+    echo ". ~/.bashrc" >> ~/.profile
+  fi
+else
+  echo "~/.profile not found"
+  echo "ln -sf profile ~/.profile"
+  ln -sf profile ~/.profile
+fi
+echo
+
+echo "* Check ~/.bashrc ..."
+if [ -f ~/.bashrc ]; then
+  echo "Found ~/.bashrc"
+  if [ -f ~/.config/bash/general ]; then
+    echo "Reload local configuration"
+  else
+    echo "Install local configuration"
+    mkdir -p ~/.config
+    ln -sf bashrc ~/.config/bashrc
+    echo ". ~/.config/bashrc" >> ~/.bashrc
+  fi
+else
+  echo "~/.bashrc not found"
+  echo "Create ~/.bashrc"
+  mkdir -p ~/.config
+  ln -sf bashrc ~/.config/bashrc
+  echo ". ~/.config/bashrc" >> ~/.bashrc
+fi
+. ~/.bashrc
